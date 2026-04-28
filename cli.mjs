@@ -1,6 +1,6 @@
 import { DitError } from './errors.mjs';
 
-export const USAGE = `Usage: node main.mjs <repository> <destination> [--ref <branch|tag|commit>]\n\nExamples:\n  node main.mjs https://github.com/org/template.git my-app\n  node main.mjs git@github.com:org/template.git my-app --ref v1.2.0`;
+export const USAGE = `Usage: dit <repository> <destination> [--ref <branch|tag|commit>]\n\nExamples:\n  dit https://github.com/org/template.git my-app\n  dit git@github.com:org/template.git my-app --ref v1.2.0\n  dit org/template my-app`;
 
 function normalizeRepository(repository) {
   if (

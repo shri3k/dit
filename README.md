@@ -1,58 +1,30 @@
 # dit
 
-`dit` is a tiny scaffolding CLI for copying a git repository into a new directory **without inheriting git history**.
-
-It supports any git-compatible remote (GitHub, GitLab, Bitbucket, self-hosted, local path), optional branch/tag/commit refs, and uses your existing system git authentication.
-
-## What it does
-
-1. Validates destination directory input
-2. Clones the repository
-3. Optionally checks out a specific ref (`branch`, `tag`, or `commit`)
-4. Removes the cloned `.git` metadata
-
-Result: plain project files, no upstream history relics.
-
-## Requirements
-
-- Node.js (ESM-compatible)
-- `git` in `PATH`
-- `pnpm` (for dependency install)
-
-## Install
-
-```bash
-pnpm install
-```
+`dit` similar to degit but for private repos too
 
 ## Usage
 
 ```bash
-node main.mjs <repository> <destination> [--ref <branch|tag|commit>]
+npx @shriek/dit <repository> <destination> [--ref <branch|tag|commit>]
 ```
 
 ### Examples
 
 ```bash
 # default remote branch behavior (git-native)
-node main.mjs https://github.com/org/template.git my-app
+dit https://github.com/org/template.git my-app
+
+# shorthand GitHub repo (auto-expanded to git@github.com:org/template.git)
+dit org/template my-app
 
 # pin to tag
-node main.mjs https://github.com/org/template.git my-app --ref v1.2.0
+dit https://github.com/org/template.git my-app --ref v1.2.0
 
 # pin to commit
-node main.mjs git@github.com:org/template.git my-app --ref 3b8f4a2
+dit git@github.com:org/template.git my-app --ref 3b8f4a2
 ```
 
-## Behavior
-
-- Destination is required
-- Destination must be empty (or not yet created, with existing parent directory)
-- Uses system git auth as-is (SSH agent, credential manager, PAT, etc.)
-- Does **not** run `git init` after scaffolding
-
-## Out of scope (v1)
-
+## Not supported
 - Submodule handling
 - Git LFS-specific handling
 - Custom auth flows
@@ -65,4 +37,8 @@ Run tests:
 pnpm test
 ```
 
-Implementation uses [`zx`](https://github.com/google/zx) for git command orchestration.
+Run locally without publishing:
+
+```bash
+node main.mjs <repository> <destination> [--ref <branch|tag|commit>]
+```

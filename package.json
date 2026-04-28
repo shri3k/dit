@@ -1,17 +1,43 @@
 {
-  "name": "dit",
+  "name": "@shriek/dit",
   "version": "1.0.0",
-  "description": "",
+  "description": "Scaffolding for everyday need",
   "main": "main.mjs",
+  "type": "module",
+  "bin": {
+    "dit": "./main.mjs"
+  },
+  "files": [
+    "main.mjs",
+    "cli.mjs",
+    "errors.mjs",
+    "progress.mjs",
+    "README.md"
+  ],
   "scripts": {
-    "test": "node --test"
+    "test": "node --test test/*.test.mjs",
+    "prepublishOnly": "pnpm test"
   },
   "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shriek/dit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shriek/dit/issues"
+  },
+  "homepage": "https://github.com/shriek/dit#readme",
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
   "packageManager": "pnpm@10.33.0",
   "dependencies": {
     "zx": "8.8.5-lite"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

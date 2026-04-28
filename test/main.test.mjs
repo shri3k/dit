@@ -13,6 +13,6 @@ test('main prints usage for --help', () => {
   });
 
   assert.equal(result.status, 0);
-  assert.match(result.stdout, /Usage: node main\.mjs/);
+  assert.match(result.stdout, /Usage: dit/);
   assert.equal(result.stderr, '');
 });
