@@ -1,6 +1,6 @@
 {
   "name": "@shriek/dit",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Scaffolding for everyday need",
   "main": "main.mjs",
   "type": "module",
