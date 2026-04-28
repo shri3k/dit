@@ -2,6 +2,10 @@
 import { $ } from 'zx';
 
 import parseArgs, { USAGE } from './cli.mjs';
+import progressBar from './progress.mjs';
+
+$.verbose = process.env.DIT_VERBOSE === '1';
+$.quiet = !$.verbose;
 
 async function main(argv = process.argv.slice(2)) {
   const args = parseArgs(argv);
@@ -12,22 +16,57 @@ async function main(argv = process.argv.slice(2)) {
   }
 
   const tmpName = Math.random().toString(36).substring(2, 15);
+  const tmpPath = `/tmp/${tmpName}`;
 
-  // Clone git
-  await $`git clone --depth=1 ${args.repository} /tmp/${tmpName}`;
+  const steps = [
+    {
+      label: 'Cloning repository',
+      run: async () => $`git clone --depth=1 ${args.repository} ${tmpPath}`,
+    },
+    ...(args.ref
+      ? [
+          {
+            label: `Checking out ref ${args.ref}`,
+            run: async () => $`git -C ${tmpPath} checkout ${args.ref}`,
+          },
+        ]
+      : []),
+    {
+      label: 'Removing git metadata',
+      run: async () => $`rm -rf ${tmpPath}/.git`,
+    },
+    {
+      label: 'Moving files to destination',
+      run: async () => $`mv ${tmpPath} ${args.destination}`,
+    },
+    {
+      label: 'Cleaning up temporary files',
+      run: async () => $`rm -rf ${tmpPath}`,
+    },
+  ];
 
-  if (args.ref) {
-    await $`git -C /tmp/${tmpName} checkout ${args.ref}`;
+  const progress = progressBar(
+    steps.length,
+    process.stdout.isTTY && !$.verbose
+  );
+  progress.render(0, 'Starting');
+
+  try {
+    for (let i = 0; i < steps.length; i += 1) {
+      const step = steps[i];
+      progress.render(i, step.label);
+      await step.run();
+      progress.render(i + 1, step.label);
+    }
+
+    progress.finish();
+  } catch (error) {
+    // Cleanup any leftover temporary files on error
+    await steps[steps.length - 1].run();
+
+    progress.abort();
+    throw error;
   }
-
-  // Remove .git
-  await $`rm -rf /tmp/${tmpName}/.git`;
-
-  // Move to destination
-  await $`mv /tmp/${tmpName} ${args.destination}`;
-
-  // Cleanup
-  await $`rm -rf /tmp/${tmpName}`;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

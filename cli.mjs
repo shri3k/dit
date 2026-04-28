@@ -2,6 +2,20 @@ import { DitError } from './errors.mjs';
 
 export const USAGE = `Usage: node main.mjs <repository> <destination> [--ref <branch|tag|commit>]\n\nExamples:\n  node main.mjs https://github.com/org/template.git my-app\n  node main.mjs git@github.com:org/template.git my-app --ref v1.2.0`;
 
+function normalizeRepository(repository) {
+  if (
+    repository.startsWith('git@') ||
+    repository.startsWith('https://') ||
+    repository.startsWith('http://') ||
+    repository.startsWith('git://') ||
+    repository.startsWith('ssh://')
+  ) {
+    return repository;
+  }
+
+  return `git@github.com:${repository}.git`;
+}
+
 export function parseArgs(argv) {
   const positional = [];
   let ref = null;
@@ -51,10 +65,12 @@ export function parseArgs(argv) {
   }
 
   return {
-    repository: positional[0],
+    repository: normalizeRepository(positional[0]),
     destination: positional[1],
     ref,
   };
 }
+
+export { normalizeRepository };
 
 export default parseArgs;

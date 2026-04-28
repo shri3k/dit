@@ -4,25 +4,25 @@ import test from 'node:test';
 import { parseArgs } from '../cli.mjs';
 import { DitError } from '../errors.mjs';
 
-test('parseArgs parses repository and destination', () => {
-  assert.deepEqual(parseArgs(['repo-url', 'my-app']), {
-    repository: 'repo-url',
+test('parseArgs expands shorthand repository and destination', () => {
+  assert.deepEqual(parseArgs(['org/template', 'my-app']), {
+    repository: 'git@github.com:org/template.git',
     destination: 'my-app',
     ref: null,
   });
 });
 
 test('parseArgs parses --ref', () => {
-  assert.deepEqual(parseArgs(['repo-url', 'my-app', '--ref', 'v1.2.0']), {
-    repository: 'repo-url',
+  assert.deepEqual(parseArgs(['org/template', 'my-app', '--ref', 'v1.2.0']), {
+    repository: 'git@github.com:org/template.git',
     destination: 'my-app',
     ref: 'v1.2.0',
   });
 });
 
 test('parseArgs parses -r shorthand', () => {
-  assert.deepEqual(parseArgs(['repo-url', 'my-app', '-r', 'main']), {
-    repository: 'repo-url',
+  assert.deepEqual(parseArgs(['org/template', 'my-app', '-r', 'main']), {
+    repository: 'git@github.com:org/template.git',
     destination: 'my-app',
     ref: 'main',
   });
@@ -37,6 +37,22 @@ test('parseArgs throws when repository is missing', () => {
     () => parseArgs([]),
     (error) => error instanceof DitError && error.code === 'REPOSITORY_REQUIRED'
   );
+});
+
+test('parseArgs keeps https repository as-is', () => {
+  assert.deepEqual(parseArgs(['https://github.com/org/template.git', 'my-app']), {
+    repository: 'https://github.com/org/template.git',
+    destination: 'my-app',
+    ref: null,
+  });
+});
+
+test('parseArgs keeps git repository as-is', () => {
+  assert.deepEqual(parseArgs(['git@github.com:org/template.git', 'my-app']), {
+    repository: 'git@github.com:org/template.git',
+    destination: 'my-app',
+    ref: null,
+  });
 });
 
 test('parseArgs throws when destination is missing', () => {
