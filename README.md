@@ -1,6 +1,6 @@
 # dit
 
-`dit` similar idea to degit but for private repos too, using git-native clone
+`dit` similar idea to [degit](https://github.com/Rich-Harris/degit) but for private repos too, using git-native clone
 
 ## Usage
 
