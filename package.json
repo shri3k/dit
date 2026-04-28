@@ -1,11 +1,11 @@
 {
   "name": "@shriek/dit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Scaffolding for everyday need",
   "main": "main.mjs",
   "type": "module",
   "bin": {
-    "dit": "./main.mjs"
+    "@shriek/dit": "./main.mjs"
   },
   "files": [
     "main.mjs",
